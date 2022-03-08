@@ -22,6 +22,15 @@
         </div>
 
         <script>
+            function changeColour(weather, item) {
+                if (weather == "Clear") {
+                    item.style.backgroundColor = "lightblue"
+                } else if (weather == "Clouds") {
+                    item.style.backgroundColor = "grey"
+                } else {
+                    item.style.backgroundColor = "blue"
+                }
+            }
             const items = document.getElementsByClassName('grid-item');
             for (let item of items) {
                 item.addEventListener('click', e => {
@@ -30,10 +39,27 @@
                     var input = document.createElement('input');
                     input.type = 'text';
                     input.defaultValue = item.textContent;
-                    input.addEventListener("keyup", e => {
+                    input.addEventListener("keyup", async e => {
                         if (e.keyCode == 13) {
-                            e.preventDefault();
-                            item.textContent = input.value;
+                            const endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${input.value}&appid=7d7bb0af43748b88ab08a9945fa1d241`;
+                            fetch(endpoint, {
+                                method: 'GET',
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.cod == "404") {
+                                    throw Error(data.message);
+                                } else {
+                                    e.preventDefault();
+                                    item.textContent = input.value;
+                                    changeColour(data.weather[0].main, item);
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                e.preventDefault();
+                                item.textContent = err;
+                            });
                         }
                     })
 
