@@ -1,0 +1,27 @@
+.main-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sub-grid-container {
+    display: flex;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+.grid-item {
+    flex-basis: 33%;
+    flex-grow: 1;
+    text-align: center;
+    border: 1px solid #000000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+span {
+    display: table-cell;
+    vertical-align: middle;
+}
