@@ -24,11 +24,11 @@
         <script>
             function changeColour(weather, item) {
                 if (weather == "Clear") {
-                    item.style.backgroundColor = "lightblue"
+                    item.style.backgroundImage = "url('sunny.jpg')";
                 } else if (weather == "Clouds") {
-                    item.style.backgroundColor = "grey"
+                    item.style.backgroundImage = "url('clouds.jpg')";
                 } else {
-                    item.style.backgroundColor = "blue"
+                    item.style.backgroundImage = "url('rainy.jpg')";
                 }
             }
             const items = document.getElementsByClassName('grid-item');
