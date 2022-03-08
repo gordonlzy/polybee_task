@@ -8,10 +8,12 @@
     display: flex;
     height: 100%;
     flex-wrap: wrap;
+    gap: 15px;
 }
 
 .grid-item {
-    flex-basis: 33%;
+    flex-basis: 31%;
+    /* height: 31%; */
     flex-grow: 1;
     text-align: center;
     border: 1px solid #000000;
@@ -19,9 +21,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
-}
-span {
-    display: table-cell;
-    vertical-align: middle;
+    position: relative;
 }

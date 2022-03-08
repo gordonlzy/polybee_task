@@ -31,43 +31,90 @@
                     item.style.backgroundImage = "url('rainy.jpg')";
                 }
             }
+
+            function createInput(item) {
+                var input = document.createElement('input');
+                input.type = 'text';
+                return input;
+            }
+
+            function createBtn(item) {
+                var btn = document.createElement('button');
+                btn.textContent = 'edit';
+                btn.style.position = 'absolute';
+                btn.style.right = "10%";
+                btn.style.top = "10%";
+                return btn;
+            }
+
+            function handleBtnEvent(btn, item) {
+                btn.addEventListener("click", e => {
+                    var input = createInput(item);
+                    item.removeChild(btn);
+                    item.append(input);
+                    item.textContent = "";
+                })
+            }
+
+            function updatePanel(e, item, newText) {
+                e.preventDefault();
+                item.textContent = newText;
+
+                var btn = createBtn(item);
+                handleBtnEvent(btn, item);
+                item.append(btn);
+            }
+
+            function handleInputEvent(item, input) {
+                input.addEventListener("keyup", async e => {
+                    if (e.keyCode == 13) {
+                        const endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${input.value}&appid=7d7bb0af43748b88ab08a9945fa1d241`;
+                        fetch(endpoint, {
+                            method: 'GET',
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.cod == "404") {
+                                throw Error(data.message);
+                            } else {
+                                updatePanel(e, item, input.value);
+                                changeColour(data.weather[0].main, item); 
+                            }
+                        })
+                        .catch(err => {
+                            item.textContent = "";
+                            const newDiv = document.createElement("div");
+                            newDiv.style.display = "flex";
+                            newDiv.style.flexDirection = "column";
+                            const errMsg = document.createElement("p");
+                            errMsg.textContent = err;
+                            newDiv.append(errMsg);
+                            newDiv.append(input);
+                            item.append(newDiv);
+                        });
+                    }
+                })
+            }
+
             const items = document.getElementsByClassName('grid-item');
             for (let item of items) {
                 item.addEventListener('click', e => {
                     const childList = item.firstChild;
+                    if (item.textContent == "" && item.childElementCount < 1) {
+                        let input = createInput(item);
+                        handleInputEvent(item, input);
 
-                    var input = document.createElement('input');
-                    input.type = 'text';
-                    input.defaultValue = item.textContent;
-                    input.addEventListener("keyup", async e => {
-                        if (e.keyCode == 13) {
-                            const endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${input.value}&appid=7d7bb0af43748b88ab08a9945fa1d241`;
-                            fetch(endpoint, {
-                                method: 'GET',
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.cod == "404") {
-                                    throw Error(data.message);
-                                } else {
-                                    e.preventDefault();
-                                    item.textContent = input.value;
-                                    changeColour(data.weather[0].main, item);
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                e.preventDefault();
-                                item.textContent = err;
-                            });
-                        }
-                    })
+                        const newDiv = document.createElement("div");
+                        newDiv.style.display = "flex";
+                        newDiv.style.flexDirection = "column";
+                        const paragraph = document.createElement("p");
+                        paragraph.textContent = "Enter a city";
+                        newDiv.append(paragraph);
+                        newDiv.append(input);
 
-                    if (item.childElementCount < 1) {
-                        item.append(input);
-                        if (childList) {
-                            item.removeChild(childList)
-                        }
+                        // item.textContent = "Enter a city";
+                        // item.append(input);
+                        item.append(newDiv);
                     }
                 });
             }
